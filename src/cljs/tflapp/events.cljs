@@ -62,8 +62,6 @@
 (re-frame/reg-event-fx
  :fetch-locations
  (fn [{db :db} _]
-   (print "fetch")
-   (print (:searchterm db))
    (let [searchterm (:searchterm db)]
      {:db         (-> db
                       (assoc :loading true)

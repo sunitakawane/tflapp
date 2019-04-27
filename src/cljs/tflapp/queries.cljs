@@ -18,13 +18,6 @@
  (fn [db]
    (:markers db)))
 
-
-(re-frame/reg-sub
- :location
- (fn [db]
-   (:location db)))
-
-
 (re-frame/reg-sub
  :fetch-searchterm-disabled
  (fn [_ _]
@@ -67,8 +60,3 @@
       (re-frame/subscribe [:selected-repo]))
   (fn [repo]
       (some? repo)))
-
-
-
-
-

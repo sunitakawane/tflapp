@@ -2,37 +2,9 @@
   (:require
    [reagent.core :as reagent]
    [re-frame.core :as re-frame]
-   ;[markdown-to-hiccup.core :as m]
    [soda-ash.core :as sa]))
 
-; (def map-ref1 (atom {}))
 (def gmap (atom {}))
-
-; (defn searchBox1 []
-;   (let [searchterm (re-frame/subscribe [:searchterm])
-;         loading  (re-frame/subscribe [:loading])
-;         disabled (re-frame/subscribe [:fetch-searchterm-disabled])]
-;       [:div
-;        [sa/Search {;:type "text"
-;                   :loading     @loading
-;                   :disabled    @loading
-;                   :value       (or @searchterm "")
-;                   :placeholder "Search Location"
-;                   :onResultSelect (fn [_ data]
-;                                    (let [selected (js->clj (.-value data))]
-;                                     (re-frame/dispatch [:repo-selected selected])))
-;                   :onSearchChange #(re-frame/dispatch [:fetch-locations])
-;                   :resultRenderer result-renderer
-;                   :results @(re-frame/subscribe [:repos])}]]))
-;                   ; :onKeyDown  (fn [e]
-;                   ;               (when (and (= (.-keyCode e) 13)
-;                   ;                          (not (.-shiftKey e)))
-;                   ;                 (.preventDefault e)
-;                   ;                 (re-frame/dispatch [:fetch-locations])))
-;                   ; :onSearchChange    #(re-frame/dispatch [:searchterm-changed (-> %2
-;                   ;                                                        (.-value)
-;                   ;                                                        (js->clj))])}]]))
-       
 
 (defn searchBox []
   (let [searchterm (re-frame/subscribe [:searchterm])
@@ -123,25 +95,18 @@
               (fn [item]
                 (let [location  (js/google.maps.LatLng. (item :lat) (item :lon))  
                       infowindow (create-infowindow (item :id))
-                      
                       numbikes (or (get (first (cool-filter [:key "NbBikes"] (item :additionalProperties))) :value) 0)
                       marker (js/google.maps.Marker. (clj->js {"position" location "map" @gmap "title" (:commonName item)}))]
-                  ; (print (cool-filter [:key "NbBikes"] (item :additionalProperties)))
-                  ; (print (get (first (cool-filter [:key "NbBikes"] (item :additionalProperties))) :value))
-                  ; ;(print (get (item :additionalProperties) :key))
-                  ;(print item)
                   (js/google.maps.event.addListener
                    marker
                    "click"
                    (fn []
-                    (js/console.log "click")
                     (.open infowindow @gmap marker)))
 
                   (js/google.maps.event.addListener
                    infowindow
                    "domready"
                    (fn []
-                    (js/console.log "domready")
                     (reagent/render (event-info-window item numbikes) (js/document.getElementById (str "info-" (item :id))))))
                   marker))
               @items))]
