@@ -16,23 +16,23 @@
 (re-frame/reg-event-db
  :searchterm-changed
  (fn [db [_ searchterm]]
-  (let [current-markers (-> db :markers)]
+  (let [current-markers (-> db :markerlist)]
      (when-not (empty? current-markers)
        (doall (map #(js-invoke % "setMap" nil)
                    current-markers)))
    (-> db
        (assoc :searchterm searchterm)
-       (dissoc :markers)
+       (dissoc :markerlist)
        (dissoc :repos)))))
 
 (re-frame/reg-event-db
  :set-markers
  (fn [db [_ new-markers]]
-   (let [current-markers (-> db :markers)]
+   (let [current-markers (-> db :markerlist)]
      (when-not (empty? current-markers)
        (doall (map #(js-invoke % "setMap" nil)
                    current-markers))))
-   (assoc-in db [:markers] new-markers)))
+   (assoc-in db [:markerlist] new-markers)))
 
 (re-frame/reg-event-db
  :repos-loaded

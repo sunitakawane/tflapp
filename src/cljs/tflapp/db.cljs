@@ -2,7 +2,7 @@
 
 (def default-db
   {:searchterm ""
-   :markers nil
+   :markerlist nil
    :map-ref (atom {})
    :repos nil})
 

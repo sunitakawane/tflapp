@@ -14,9 +14,9 @@
    (:searchterm db)))
 
 (re-frame/reg-sub
- :markers
+ :markerlist
  (fn [db]
-   (:markers db)))
+   (:markerlist db)))
 
 (re-frame/reg-sub
  :fetch-searchterm-disabled
