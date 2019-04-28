@@ -5,7 +5,6 @@
    [soda-ash.core :as sa]))
 
 (def gmap (atom {}))
-
 (defn searchBox []
   (let [searchterm (re-frame/subscribe [:searchterm])
         loading  (re-frame/subscribe [:loading])
@@ -41,7 +40,7 @@
 
 
 
-(defn cool-filter [[k v] l]
+(defn map-filter [[k v] l]
   (filter #(= (k %) v) l))
 
 (defn loc-list [common-name lat lon selected id nbikes]
@@ -72,7 +71,7 @@
        (doall
         (for [loc @repos]
          ^{:key (:id loc)}
-          [loc-list (:commonName loc) (:lat loc) (:lon loc) @selected (:id loc) (or (get (first (cool-filter [:key "NbBikes"] (loc :additionalProperties))) :value) 0)]))]]))
+          [loc-list (:commonName loc) (:lat loc) (:lon loc) @selected (:id loc) (or (get (first (map-filter [:key "NbBikes"] (loc :additionalProperties))) :value) 0)]))]]))
            
 
 (defn m-p [m p]
@@ -94,15 +93,22 @@
              (map
               (fn [item]
                 (let [location  (js/google.maps.LatLng. (item :lat) (item :lon))  
+                      ; sw (js/google.maps.LatLng. (- (item :lat) 10) (- (item :lng) 10))
+                      ; ne (js/google.maps.LatLng. (+ (item :lat) 10) (+ (item :lng) 10))
+                      ; bounds (js/google.maps.LatLngBounds. sw ne)
                       infowindow (create-infowindow (item :id))
-                      numbikes (or (get (first (cool-filter [:key "NbBikes"] (item :additionalProperties))) :value) 0)
-                      marker (js/google.maps.Marker. (clj->js {"position" location "map" @gmap "title" (:commonName item)}))]
+                      numbikes (or (get (first (map-filter [:key "NbBikes"] (item :additionalProperties))) :value) 0)
+                      marker (js/google.maps.Marker. (clj->js {"position" location "center" (js/google.maps.LatLng. 51.525595, -0.144083) "map" @gmap  "title" (:commonName item)}))]
                   (js/google.maps.event.addListener
                    marker
                    "click"
                    (fn []
                     (.open infowindow @gmap marker)))
-
+                  (js/google.maps.event.addListener
+                   marker
+                   "mouseout"
+                   (fn []
+                    (.close infowindow @gmap marker)))
                   (js/google.maps.event.addListener
                    infowindow
                    "domready"
@@ -110,7 +116,6 @@
                     (reagent/render (event-info-window item numbikes) (js/document.getElementById (str "info-" (item :id))))))
                   marker))
               @items))]
-
         (re-frame/dispatch [:set-markers new-markers])))))
 
 (defn map-component []

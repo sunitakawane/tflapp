@@ -25,16 +25,6 @@
        (dissoc :markers)
        (dissoc :repos)))))
 
-(defn create-infowindow [id]
-  (js/google.maps.InfoWindow. (clj->js {"content" (str "<div id='info-" id "'></div>")})))
-
-
-; (re-frame/reg-event-db
-;  :set-markers
-;  (fn [db [_ new-markers]]
-;    (-> db
-;        (assoc :markers new-markers))))
-
 (re-frame/reg-event-db
  :set-markers
  (fn [db [_ new-markers]]
@@ -67,10 +57,8 @@
                       (assoc :loading true)
                       (dissoc :error))
       :http-xhrio {:method          :get
-                   ;:uri             (str "https://api.github.com/users/" term "/repos")https://api.tfl.gov.uk/Place/Search?name=Ampton%20Street%20%2C&types=BikePoint
                    :uri             (if searchterm (str "https://api.tfl.gov.uk/Place/Search?name=" searchterm "&types=BikePoint&app_id=d6b3fe7c&app_key=4ae6aee53e98571d8c0e9e8d9b04aa66") "")
 
-                   ;:params          {:sort :pushed}
                    :timeout         5000
                    :response-format (ajax/json-response-format {:keywords? true})
                    :on-success      [:repos-loaded]
