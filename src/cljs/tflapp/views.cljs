@@ -83,10 +83,10 @@
    [:div (str " NoOfBikes : " numbikes)]])
 
 
-
 (defn markers []
   (let [items (re-frame/subscribe [:repos])]
     @items
+   (if @items
     (fn []
       (let [new-markers
             (doall
@@ -116,12 +116,13 @@
                     (reagent/render (event-info-window item numbikes) (js/document.getElementById (str "info-" (item :id))))))
                   marker))
               @items))]
-        (re-frame/dispatch [:set-markers new-markers])))))
+        (re-frame/dispatch [:set-markers new-markers]))))))
 
 (defn map-component []
  (let [
        items (re-frame/subscribe [:repos])]
   @items
+  (if @items
    (reagent/create-class {:reagent-render (fn []
                                            [:div
                                             [:h4 "Map"]
@@ -134,7 +135,7 @@
                                     tgmap      (js/google.maps.Map. m-canvas m-options)]
                                    tgmap
                                   ;(js/google.maps.Marker. (clj->js {"position" (js/google.maps.LatLng. 51.525595, -0.144083), "map" tgmap}))
-                                (reset! gmap tgmap)))})))
+                                (reset! gmap tgmap)))}))))
                                 ; (reset! @map-ref tgmap)))}))))
                          
 

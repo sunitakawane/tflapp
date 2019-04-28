@@ -4,7 +4,7 @@
   {:searchterm ""
    :markers nil
    :map-ref (atom {})
-   :repos []})
+   :repos nil})
 
 (defn selected-repo [repos selected]
   (some #(when (= (:id %) selected) %) repos))
